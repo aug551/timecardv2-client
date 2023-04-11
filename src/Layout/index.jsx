@@ -26,10 +26,10 @@ const Layout = () => {
     useEffect(() => {
         const loggedEmp = localStorage.getItem('emp');
         if (loggedEmp) {
-            setEmp(loggedEmp);
+            setEmp(JSON.parse(loggedEmp));
         }
         setIsLoading(false);
-    });
+    }, []);
 
     function renderHomepage() {
         if (!isLoading)
