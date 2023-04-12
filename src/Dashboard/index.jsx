@@ -1,18 +1,15 @@
 import './index.css';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Button } from '@mui/material';
 import { EmployeeContext } from '../Layout';
 import axios from 'axios';
 import ShiftsTable from '../ShiftsTable';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 const Dashboard = () => {
-    const { emp, setEmp } = useContext(EmployeeContext);
+    const [emp, setEmp] = useOutletContext();
     const [shifts, setShifts] = useState();
 
-    useEffect(() => {
-        getShifts();
-
-    }, []);
 
     function getShifts() {
         axios.post('http://localhost:4000/emp/shifts', {
@@ -20,16 +17,17 @@ const Dashboard = () => {
         })
             .then(result => {
                 setShifts(result.data);
+                return <ShiftsTable shift={result.data} />
             })
             .catch(error => {
                 console.log(error.message);
             })
-
     }
 
     function logOut() {
         localStorage.removeItem('emp');
         setEmp(null);
+        navigate('/login')
     }
 
     async function punch() {
@@ -63,17 +61,30 @@ const Dashboard = () => {
         return (shifts[0].shiftend === null) ? "Punch out" : "Punch In";
     }
 
-    return (
-        <div className='dashboard-container'>
-            <div className="info-container">
-                <h2>{emp.empname}</h2>
-                <h3>Number: {emp.empid}</h3>
-                <h3>{emp.empjob}</h3>
-                <Button sx={{ marginTop: '1.3rem' }} variant='contained' onClick={() => logOut()}>Log out</Button>
+    function renderDashboard() {
+        if (emp == null) {
+            return;
+        }
+
+        getShifts();
+        return (
+            <div className='dashboard-container'>
+                <div className="info-container">
+                    <h2>{emp.empname}</h2>
+                    <h3>Number: {emp.empid}</h3>
+                    <h3>{emp.empjob}</h3>
+                    <Button sx={{ marginTop: '1.3rem' }} variant='contained' onClick={() => logOut()}>Log out</Button>
+                </div>
+                <Button variant='contained' onClick={() => punch()}>{displayPunchBtnText()}</Button>
+                <ShiftsTable shifts={shifts} />
             </div>
-            <Button variant='contained' onClick={() => punch()}>{displayPunchBtnText()}</Button>
-            {(shifts == undefined) ? <>Loading...</> : <ShiftsTable shifts={shifts} />}
-        </div>
+        )
+    }
+
+    return (
+        <>
+            {renderDashboard()}
+        </>
     )
 }
 

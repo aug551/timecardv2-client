@@ -3,9 +3,11 @@ import React, { useContext } from 'react'
 import { EmployeeContext } from '../Layout'
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 const Login = () => {
-    const { setEmp } = useContext(EmployeeContext);
+    // const { setEmp } = useContext(EmployeeContext);
+    const [emp, setEmp] = useOutletContext();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,9 +22,9 @@ const Login = () => {
             );
 
             if (response.status == 200) {
-                console.log(response.data);
                 setEmp(response.data);
                 localStorage.setItem('emp', JSON.stringify(response.data));
+                // navigate('/dashboard');
             }
         }
         catch (error) {

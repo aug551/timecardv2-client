@@ -3,7 +3,7 @@ import './index.css';
 import React, { createContext, useEffect, useState } from 'react'
 import LoginPage from '../LoginPage'
 import Dashboard from '../Dashboard';
-import { Navigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 export const EmployeeContext = createContext();
 
@@ -20,28 +20,20 @@ const theme = createTheme({
 })
 
 const Layout = () => {
-    const [emp, setEmp] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [emp, setEmp] = useState(JSON.parse(localStorage.getItem('emp')));
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const loggedEmp = localStorage.getItem('emp');
-        if (loggedEmp) {
-            setEmp(JSON.parse(loggedEmp));
-        }
-        setIsLoading(false);
-    }, []);
+        renderHomepage();
+    }, [emp]);
 
     function renderHomepage() {
-        if (!isLoading)
-            return (emp == null) ? <LoginPage /> : <Dashboard />;
-
+        return (emp == null) ? navigate('/login') : navigate('/dashboard');
     }
 
     return (
         <ThemeProvider theme={theme}>
-            <EmployeeContext.Provider value={{ emp, setEmp }}>
-                {renderHomepage()}
-            </EmployeeContext.Provider>
+            <Outlet context={[emp, setEmp]} />
         </ThemeProvider>
     );
 }
