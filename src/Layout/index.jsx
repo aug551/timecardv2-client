@@ -20,10 +20,16 @@ const theme = createTheme({
 })
 
 const Layout = () => {
-    const [emp, setEmp] = useState(JSON.parse(localStorage.getItem('emp')));
+    const [emp, setEmp] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
+        const storage = localStorage.getItem("emp");
+        if (storage != null || !storage.empid) {
+            localStorage.setItem("emp", null);
+            setEmp(null);
+        }
+
         renderHomepage();
     }, [emp]);
 
