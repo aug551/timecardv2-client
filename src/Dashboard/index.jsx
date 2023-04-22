@@ -15,7 +15,6 @@ const Dashboard = () => {
             const shiftsRes = await axios.post('http://localhost:4000/emp/shifts', {
                 empId: emp.empid
             })
-
             const res = shiftsRes.data;
             setShifts(res);
         } catch (err) { console.error(err); }
