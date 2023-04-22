@@ -1,8 +1,6 @@
 import { ThemeProvider, createTheme, useTheme } from '@mui/material';
 import './index.css';
 import React, { createContext, useEffect, useState } from 'react'
-import LoginPage from '../LoginPage'
-import Dashboard from '../Dashboard';
 import { Outlet, useNavigate } from 'react-router-dom';
 
 export const EmployeeContext = createContext();
@@ -24,12 +22,15 @@ const Layout = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        renderHomepage();
+        if (emp === null) {
+            localStorage.removeItem('emp');
+            return navigate('login');
+        }
+        if (emp !== null) {
+            localStorage.setItem('emp', JSON.stringify(emp));
+            return navigate('dashboard');
+        }
     }, [emp]);
-
-    function renderHomepage() {
-        return (emp == null) ? navigate('/login') : navigate('/dashboard');
-    }
 
     return (
         <ThemeProvider theme={theme}>

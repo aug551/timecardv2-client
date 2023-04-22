@@ -1,52 +1,99 @@
 import './index.css'
-import React, { useContext, useState } from 'react'
-import { EmployeeContext } from '../Layout'
+import React, { useEffect, useRef, useState } from 'react'
 import { Alert, Button, TextField } from '@mui/material';
 import axios from 'axios';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 
 const Login = () => {
-    // const { setEmp } = useContext(EmployeeContext);
     const [emp, setEmp] = useOutletContext();
     const [pwReq, setPwReq] = useState(false);
+
     const [alerts, setAlerts] = useState([]);
+    const [updated, setUpdated] = useState(false);
+    const [timeouts, setTimeouts] = useState([]);
+    const alertsRef = useRef(alerts);
+    alertsRef.current = alerts;
+    // Time alert displays
+    const alertTimeoutTime = 8000;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let empId = e.target.empId.value;
 
-        if (pwReq && e.target.adminPw.value == "") {
-            setAlerts((prev) => [
-                ...prev,
-                <Alert severity='error'>Please enter a password to login.</Alert>
-            ]);
-        }
+        // Set values to submit
+        const empId = e.target.empId.value.toString();
+        const password = e.target.adminPw.value;
+        let loginUrl = "http://localhost:4000/emp/login";
+        let payload = { empId };
 
         try {
-            const response = await axios.post(
-                "http://localhost:4000/emp/login/",
-                {
-                    empId: empId.toString()
+            // If it's admin set the values for admin
+            if (pwReq) {
+                if (password == "") {
+                    // Alert if pw is empty
+                    return createAlert(<Alert key={new Date().getTime()} severity='error'>Please enter a password to login.</Alert>);
                 }
-            );
 
-            if (response.status == 200) {
-                let emp = response.data;
-
-                if (emp.ismanager) {
-                    // Show password field
-                    setPwReq(true);
-                }
-                else {
-                    setEmp(emp);
-                    localStorage.setItem('emp', JSON.stringify(emp));
-                }
+                loginUrl = "http://localhost:4000/admin/login";
+                payload = { empId, password };
             }
+
+            // Submits login information
+            const empRes = await submitLogin(loginUrl, payload);
+            // Redo the function if it's a manager (require password)
+            if (empRes.requirePwd) return setPwReq(true);
+
+            // Invalid Account error
+            if (empRes == 204)
+                return createAlert(<Alert key={new Date().getTime()} severity='error'>Invalid account information.</Alert>)
+
+            return setEmp(empRes);
         }
         catch (error) {
-            console.error(error.message);
+            console.log("error!!")
+            console.error(error.response);
         }
     }
+
+    async function submitLogin(url, payload) {
+        try {
+            const response = await axios.post(url, payload);
+            if (response.status == 200) {
+                return response.data;
+            }
+            return response.status;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+
+
+    function createAlert(alert) {
+        setAlerts((prev) => [...prev, alert]);
+        setUpdated(true);
+    }
+
+    useEffect(() => {
+        if (updated == true) {
+            setUpdated(false);
+
+            // Handle Alerts
+            if (alerts.length > 0) {
+                setTimeouts(prev => [
+                    ...prev,
+                    setTimeout(() => {
+                        setAlerts(alertsRef.current.slice(1));
+                    }, 8000)
+                ]);
+            }
+        }
+
+        return () => {
+            timeouts.forEach(to => clearTimeout(to));
+        }
+
+    }, [alerts]);
+
 
     return (
         <>

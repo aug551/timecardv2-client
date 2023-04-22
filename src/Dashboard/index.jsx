@@ -1,33 +1,28 @@
 import './index.css';
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Button } from '@mui/material';
 import { EmployeeContext } from '../Layout';
 import axios from 'axios';
 import ShiftsTable from '../ShiftsTable';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 
 const Dashboard = () => {
+    const [shifts, setShifts] = useState(null);
     const [emp, setEmp] = useOutletContext();
-    const [shifts, setShifts] = useState();
 
+    async function getShifts() {
+        try {
+            const shiftsRes = await axios.post('http://localhost:4000/emp/shifts', {
+                empId: emp.empid
+            })
 
-    function getShifts() {
-        axios.post('http://localhost:4000/emp/shifts', {
-            empId: emp.empid
-        })
-            .then(result => {
-                setShifts(result.data);
-                return <ShiftsTable shift={result.data} />
-            })
-            .catch(error => {
-                console.log(error.message);
-            })
+            const res = shiftsRes.data;
+            setShifts(res);
+        } catch (err) { console.error(err); }
     }
 
     function logOut() {
-        localStorage.removeItem('emp');
         setEmp(null);
-        navigate('/login')
     }
 
     async function punch() {
@@ -61,12 +56,12 @@ const Dashboard = () => {
         return (shifts[0].shiftend === null) ? "Punch out" : "Punch In";
     }
 
-    function renderDashboard() {
-        if (emp == null) {
-            return;
-        }
+    useEffect(() => {
+        if (shifts === null || shifts === undefined)
+            getShifts();
+    }, [shifts]);
 
-        getShifts();
+    function renderDashboard() {
         return (
             <div className='dashboard-container'>
                 <div className="info-container">
@@ -83,7 +78,7 @@ const Dashboard = () => {
 
     return (
         <>
-            {renderDashboard()}
+            {(emp == null) ? <>loading</> : renderDashboard()}
         </>
     )
 }
