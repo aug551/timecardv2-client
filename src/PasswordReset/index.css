@@ -1,0 +1,23 @@
+#password-reset-form {
+    display: flex;
+    flex-direction: column;
+    width: 30em;
+    gap: 1.33rem;
+}
+
+.password-reset-container {
+    text-align: center;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    height: 100vh;
+    gap: 1.33rem;
+}
+
+h2 {
+    font-weight: 300;
+    font-size: 2rem;
+}
