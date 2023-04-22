@@ -20,6 +20,7 @@ const Dashboard = () => {
         } catch (err) { console.error(err); }
     }
 
+
     function logOut() {
         setEmp(null);
     }
