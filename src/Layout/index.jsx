@@ -18,7 +18,7 @@ const theme = createTheme({
 })
 
 const Layout = () => {
-    const [emp, setEmp] = useState(JSON.parse(localStorage.getItem('emp')));
+    const [emp, setEmp] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
