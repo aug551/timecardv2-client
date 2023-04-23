@@ -9,6 +9,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Login from './LoginPage';
 import Dashboard from './Dashboard';
 import PasswordReset from './PasswordReset';
+import Admin from './Admin';
 
 const router = createBrowserRouter([{
   path: '/',
@@ -25,6 +26,10 @@ const router = createBrowserRouter([{
     {
       path: 'password-reset',
       element: <PasswordReset />
+    },
+    {
+      path: 'admin-page',
+      element: <Admin />
     }
   ]
 }])

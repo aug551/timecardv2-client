@@ -18,18 +18,24 @@ const theme = createTheme({
 })
 
 const Layout = () => {
-    const [emp, setEmp] = useState(null);
+    const [emp, setEmp] = useState(JSON.parse(localStorage.getItem('emp')));
     const navigate = useNavigate();
 
     useEffect(() => {
+        let navigateLocation = "login";
+
         if (emp === null) {
             localStorage.removeItem('emp');
-            return navigate('login');
+            navigateLocation = 'login';
         }
+
         if (emp !== null) {
             localStorage.setItem('emp', JSON.stringify(emp));
-            return navigate('dashboard');
+            navigateLocation = (emp.ismanager) ? 'admin-page' : 'dashboard'
         }
+
+        navigate(navigateLocation);
+
     }, [emp]);
 
     return (

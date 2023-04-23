@@ -5,6 +5,7 @@ import { EmployeeContext } from '../Layout';
 import axios from 'axios';
 import ShiftsTable from '../ShiftsTable';
 import { useOutletContext } from 'react-router-dom';
+import LogoutBtn from '../Components/LogoutBtn';
 
 const Dashboard = () => {
     const [shifts, setShifts] = useState(null);
@@ -68,7 +69,7 @@ const Dashboard = () => {
                     <h2>{emp.empname}</h2>
                     <h3>Number: {emp.empid}</h3>
                     <h3>{emp.empjob}</h3>
-                    <Button sx={{ marginTop: '1.3rem' }} variant='contained' onClick={() => logOut()}>Log out</Button>
+                    <LogoutBtn logOut={logOut} />
                 </div>
                 <Button variant='contained' onClick={() => punch()}>{displayPunchBtnText()}</Button>
                 <ShiftsTable shifts={shifts} />

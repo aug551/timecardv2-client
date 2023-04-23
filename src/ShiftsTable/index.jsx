@@ -29,8 +29,11 @@ const ShiftsTable = (props) => {
             }
 
             function formatDuration(start, end) {
-                // console.log(end);
-                return ((end.getTime() - start.getTime()) / 3600000).toFixed(2);
+                const formatted = ((end.getTime() - start.getTime()) / 3600000).toFixed(2);
+                const hours = formatted.toString().split('.')[0];
+                const calcMin = Math.round(((parseInt(formatted.toString().split('.')[1]) * 60) / 100))
+                const min = ("0" + calcMin).slice(-2);
+                return `${hours}:${min}`;
             }
 
             let newShift = {
@@ -54,7 +57,8 @@ const ShiftsTable = (props) => {
                     sx={{
                         minHeight: '400px',
                         maxWidth: '800px',
-                        margin: 'auto'
+                        margin: 'auto',
+                        fontSize: '1.2rem'
                     }}
                     rows={rows}
                     columns={columns}
