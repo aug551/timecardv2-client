@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useLayoutEffect, useMemo, useState } from
 import { Button } from '@mui/material';
 import { EmployeeContext } from '../Layout';
 import axios from 'axios';
-import ShiftsTable from '../ShiftsTable';
+import ShiftsTable from '../Components/ShiftsTable';
 import { useOutletContext } from 'react-router-dom';
 import LogoutBtn from '../Components/LogoutBtn';
 

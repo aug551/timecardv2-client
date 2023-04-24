@@ -31,7 +31,7 @@ const Layout = () => {
 
         if (emp !== null) {
             localStorage.setItem('emp', JSON.stringify(emp));
-            navigateLocation = (emp.ismanager) ? 'admin-page' : 'dashboard'
+            navigateLocation = (emp.ismanager) ? 'admin-page/employees' : 'dashboard'
         }
 
         navigate(navigateLocation);
